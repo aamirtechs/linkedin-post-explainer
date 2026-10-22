@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LinkedIn Post Explainer - Explain, don't generate</title>
+<meta name="description" content="Paste a LinkedIn post. Get the argument, the evidence, the slop check and reply angles that are actually worth using. Local, paste-mode only, draft-only.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#081120; --bg2:#0b1830; --card:#0e1e3a; --card2:#12264a;
+  --line:#1e3a66; --ink:#eef3fb; --muted:#9db1cc; --faint:#6d84a5;
+  --gold:#d9a94e; --gold2:#b9852e; --teal:#3ec6a7; --red:#e0655f; --amber:#e8b34b;
+  --radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:radial-gradient(1100px 600px at 85% -10%, #16305c 0%, transparent 60%),radial-gradient(900px 500px at -10% 110%, #13294f 0%, transparent 55%),var(--bg);color:var(--ink);font-family:"Plus Jakarta Sans",system-ui,sans-serif;line-height:1.55;min-height:100vh}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 70px}
+header.top{padding:26px 0 8px}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+h1{font-family:"Sora",sans-serif;font-size:clamp(34px,5vw,54px);font-weight:800;line-height:1.06;margin:10px 0 12px}
+h1 .accent{color:var(--gold)}
+.tagline{font-size:clamp(16px,2.2vw,20px);color:var(--muted);max-width:720px}
+.safety{margin:22px 0 6px;background:linear-gradient(135deg,#10264a,#0c1c38);border:1px solid var(--gold2);border-radius:var(--radius);padding:16px 18px;display:flex;gap:14px;align-items:flex-start}
+.safety .badge{flex:0 0 auto;background:var(--gold);color:#081120;font-weight:800;font-family:"Sora",sans-serif;font-size:12px;letter-spacing:.08em;padding:6px 10px;border-radius:999px;text-transform:uppercase}
+.safety p{font-size:14.5px;color:var(--ink)}
+.safety p span{color:var(--muted)}
+main{display:grid;grid-template-columns:1fr 1.15fr;gap:22px;margin-top:24px;align-items:start}
+@media(max-width:920px){main{grid-template-columns:1fr}}
+.card{background:linear-gradient(180deg,var(--card),#0c1a33);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:18px}
+.card h2{font-family:"Sora",sans-serif;font-size:18px;font-weight:700;margin-bottom:6px}
+.card h3{font-family:"Sora",sans-serif;font-size:14px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);margin:16px 0 8px}
+.card h3:first-of-type{margin-top:4px}
+.hint{font-size:13.5px;color:var(--muted);margin-bottom:12px}
+textarea{width:100%;min-height:280px;resize:vertical;background:#081426;border:1px solid var(--line);border-radius:12px;color:var(--ink);font:inherit;font-size:15px;padding:14px}
+textarea:focus,input:focus{outline:2px solid var(--gold2);outline-offset:1px}
+.meta-row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--faint);margin-top:8px;font-family:"IBM Plex Mono",monospace}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+button{font:inherit;font-weight:700;cursor:pointer;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--ink);padding:10px 18px;font-size:14.5px}
+button:hover{border-color:var(--gold2)}
+button.primary{background:var(--gold);border-color:var(--gold);color:#081120}
+button.primary:hover{background:#e7ba60}
+button.ghost{background:transparent}
+button.small{padding:6px 12px;font-size:12.5px}
+.seg{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.seg button{border-radius:10px;padding:8px 12px;font-size:13.5px}
+.seg button.active{background:var(--gold);color:#081120;border-color:var(--gold)}
+label.f{display:block;font-size:13px;font-weight:700;color:var(--muted);margin:14px 0 6px}
+input[type="password"],input[type="text"]{width:100%;background:#081426;border:1px solid var(--line);border-radius:10px;color:var(--ink);font:inherit;font-size:14px;padding:10px 12px}
+.small-note{font-size:12.5px;color:var(--faint);margin-top:8px}
+.verdict{border-radius:var(--radius);padding:18px 20px;border:1px solid var(--line);margin-bottom:18px;display:none}
+.verdict.show{display:block}
+.verdict .vlabel{font-family:"Sora",sans-serif;font-size:24px;font-weight:800}
+.verdict .vreason{color:var(--muted);font-size:14.5px;margin-top:4px}
+.verdict.go{background:linear-gradient(135deg,#0d2c26,#0c1c38);border-color:var(--teal)}
+.verdict.go .vlabel{color:var(--teal)}
+.verdict.skim{background:linear-gradient(135deg,#2c230d,#0c1c38);border-color:var(--amber)}
+.verdict.skim .vlabel{color:var(--amber)}
+.verdict.skip{background:linear-gradient(135deg,#331615,#0c1c38);border-color:var(--red)}
+.verdict.skip .vlabel{color:var(--red)}
+ul.clean{list-style:none}
+ul.clean li{padding:8px 0;border-bottom:1px dashed #1c3560;font-size:14.5px}
+ul.clean li:last-child{border-bottom:none}
+blockquote.hook{border-left:3px solid var(--gold);padding:4px 0 4px 12px;color:var(--muted);font-size:14px;margin:6px 0 10px}
+.flag{display:inline-block;background:#2a1414;border:1px solid #6e2b28;color:#f0a49f;border-radius:8px;padding:3px 8px;font-size:12.5px;margin:3px 4px 3px 0;font-family:"IBM Plex Mono",monospace}
+.flag.bait{background:#12283f;border-color:#2c5a86;color:#a9cdf2}
+.flag.ok{background:#0d2c26;border-color:#1f6e5a;color:#8fe3cb}
+.scorebar{height:10px;background:#081426;border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+.scorebar i{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--amber),var(--red));width:0%}
+.scoreline{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin:6px 0 8px}
+.draft{background:#081426;border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.draft p{font-size:15px}
+.draft .dhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.draft .dhead span{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.empty{color:var(--faint);font-size:14.5px;padding:26px 6px;text-align:center}
+#geminiOut{white-space:pre-wrap;font-size:14.5px;color:var(--ink);background:#081426;border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:12px;display:none}
+footer{margin-top:34px;color:var(--faint);font-size:13px;text-align:center}
+footer b{color:var(--muted)}
+.kbd{font-family:"IBM Plex Mono",monospace;font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div class="kicker">LinkedIn Post Explainer - v1.0.0</div>
+  <h1>Explain, <span class="accent">don't generate.</span></h1>
+  <p class="tagline">Paste a LinkedIn post and get the part no comment generator gives you: what the post is actually arguing, what evidence it stands on, how much of it is slop or bait, and whether a reply is worth your time at all.</p>
+  <div class="safety">
+    <div class="badge">Safe by design</div>
+    <p><strong>Paste-mode only.</strong> <span>This tool never connects to LinkedIn, never reads your feed, never scrapes and never posts anything. You paste a post, everything is analysed locally in your browser, and any draft stays a draft until you decide what to do with it. That is deliberate: LinkedIn's rules ban extensions that scrape or automate the site, so this tool does none of that.</span></p>
+  </div>
+</header>
+<main>
+  <section>
+    <div class="card">
+      <h2>The post</h2>
+      <p class="hint">Copy any LinkedIn post, paste it here, then run the analysis. Nothing leaves this page unless you choose the optional Gemini enhancement below.</p>
+      <textarea id="postInput" placeholder="Paste the LinkedIn post here..."></textarea>
+      <div class="meta-row"><span id="charCount">0 characters</span><span id="wordCount">0 words</span></div>
+      <div class="btn-row">
+        <button class="primary" id="analyzeBtn">Explain this post</button>
+        <button id="sampleBtn">Load sample post</button>
+        <button class="ghost" id="clearBtn">Clear</button>
+      </div>
+      <label class="f" for="toneSeg">Draft tone</label>
+      <div class="seg" id="toneSeg">
+        <button data-tone="agree" class="active">Agree and add</button>
+        <button data-tone="pushback">Respectful pushback</button>
+        <button data-tone="question">Ask a real question</button>
+      </div>
+      <p class="small-note">Changing the tone regenerates the three draft replies from the same analysis.</p>
+    </div>
+    <div class="card">
+      <h2>Optional: deeper read with your own Gemini key</h2>
+      <p class="hint">The local analysis above is complete on its own and works offline. If you want a second, deeper explanation, paste your own free Google AI Studio key here. It is stored only in this browser's local storage and is sent only to Google's API, with the post and the local analysis, when you press the button.</p>
+      <label class="f" for="geminiKey">Gemini API key (optional, yours only)</label>
+      <input type="password" id="geminiKey" placeholder="Paste your free AI Studio key, or leave empty" autocomplete="off">
+      <div class="btn-row">
+        <button id="geminiBtn">Enhance with Gemini</button>
+        <button class="ghost" id="forgetKeyBtn">Forget key</button>
+      </div>
+      <div id="geminiOut"></div>
+      <p class="small-note">No key is ever sent to this tool's author or to any other server.</p>
+    </div>
+  </section>
+  <section>
+    <div class="verdict" id="verdictBox">
+      <div class="vlabel" id="verdictLabel"></div>
+      <div class="vreason" id="verdictReason"></div>
+    </div>
+    <div class="card" id="resultsCard">
+      <h2>The explanation</h2>
+      <div class="empty" id="emptyState">Paste a post on the left and press "Explain this post". Your breakdown will appear here: the argument, the evidence, the slop and bait check, three reply angles and three drafts.</div>
+      <div id="results" style="display:none">
+        <h3>The argument in plain words</h3>
+        <p id="claimOut" style="font-size:16.5px;font-weight:600"></p>
+        <h3>Supporting points</h3>
+        <ul class="clean" id="supportOut"></ul>
+        <h3>Evidence found</h3>
+        <div id="evidenceOut"></div>
+        <h3>Slop and bait check</h3>
+        <div class="scoreline"><span>AI slop signal</span><span id="slopScoreLabel"></span></div>
+        <div class="scorebar"><i id="slopBar"></i></div>
+        <div id="slopOut" style="margin-top:10px"></div>
+        <div id="baitOut" style="margin-top:8px"></div>
+        <h3>Reply angles</h3>
+        <div id="anglesOut"></div>
+        <h3>Draft replies</h3>
+        <p class="hint">Short, specific and human. No credentials, no pitch, no generic praise openers. Edit before you use one, a draft is a starting point, not a post.</p>
+        <div id="draftsOut"></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>
+  <p><b>LinkedIn Post Explainer</b> - local-first, paste-mode only, draft-only. Built because over 40% of long-form LinkedIn posts are now AI-generated and readers are flagging slop at record rates. The winning reply starts with actually understanding the post.</p>
+</footer>
+</div>
+<script>
+"use strict";
+/* LinkedIn Post Explainer - local rule-based analysis engine.
+   Everything in this file runs in the visitor's browser.
+   No post text is sent anywhere by the local engine. */
+
+var SAMPLE_POST = [
+  "Most teams do not have a hiring problem. They have a clarity problem.",
+  "",
+  "According to a 2024 Gallup report, only 47% of employees say they know what is expected of them at work. That number has been falling for a decade, even as hiring tools got better.",
+  "",
+  "When expectations are vague, three things happen. Good people get blamed for missing targets nobody wrote down. Managers spend their week re-explaining priorities instead of removing blockers. And new hires take months to become useful, because the real job was never described.",
+  "",
+  "The fix is boring. Write down the three outcomes each role owns. Review them every month. Cut anything that no longer matters.",
+  "",
+  "What is the one expectation your team still guesses at?"
+].join("\n");
+
+var SLOP_PHRASES = [
+  "game changer", "game-changing", "in today's fast-paced world", "fast-paced world",
+  "delve", "revolutionary", "unlock", "supercharge", "level up", "synergy",
+  "disruptive", "cutting-edge", "cutting edge", "ever-evolving", "at the end of the day",
+  "move the needle", "paradigm shift", "thought leader", "secret sauce", "game plan",
+  "hustle", "10x", "world-class", "best-in-class", "leverage synergies", "deep dive",
+  "circle back", "low-hanging fruit", "in the digital age", "take it to the next level"
+];
+
+var BAIT_PHRASES = [
+  "agree?", "agree or disagree", "what do you think", "thoughts?", "comment below",
+  "let me know in the comments", "let me know", "tag someone", "like if you",
+  "share if you", "follow for more", "follow me for", "what would you add",
+  "your turn", "drop a comment", "am i wrong", "hot take"
+];
+
+function cleanText(t) {
+  return String(t || "").replace(/\s+/g, " ").trim();
+}
+
+function splitSentences(text) {
+  var raw = String(text || "").replace(/\n+/g, " ");
+  var parts = raw.match(/[^.!?]+[.!?]+["')\]]*|\S[^.!?]*$/g) || [];
+  return parts.map(function (s) { return cleanText(s); }).filter(function (s) { return s.length > 2; });
+}
+
+function splitLines(text) {
+  return String(text || "").split(/\n/).map(function (l) { return l.trim(); }).filter(Boolean);
+}
+
+function sentenceContaining(sentences, needle) {
+  for (var i = 0; i < sentences.length; i++) {
+    if (sentences[i].indexOf(needle) !== -1) return sentences[i];
+  }
+  return needle;
+}
+
+function pickMainClaim(sentences) {
+  for (var i = 0; i < sentences.length; i++) {
+    var s = sentences[i];
+    if (s.indexOf("?") !== -1) continue;
+    if (/^(hi|hello|hey|good morning|i am|i'm)\b/i.test(s)) continue;
+    var words = s.split(" ").length;
+    if (words >= 5 && words <= 40) return s;
+  }
+  return sentences.length ? sentences[0] : "";
+}
+
+function pickSupporting(sentences, claim) {
+  var out = [];
+  var lines = [];
+  for (var i = 0; i < sentences.length; i++) {
+    var s = sentences[i];
+    if (s === claim) continue;
+    if (s.indexOf("?") !== -1 && /\byou\b|\byour\b/i.test(s)) continue;
+    if (s.split(" ").length < 5) continue;
+    out.push(s);
+    if (out.length >= 5) break;
+  }
+  return out;
+}
+
+function detectEvidence(text, sentences) {
+  var found = [];
+  var seen = {};
+  function add(type, match, sentence) {
+    var key = type + "|" + match;
+    if (seen[key]) return;
+    seen[key] = true;
+    found.push({ type: type, match: match, sentence: sentence || sentenceContaining(sentences, match) });
+  }
+  var m, re;
+  re = /\b\d+(?:\.\d+)?\s?%/g;
+  while ((m = re.exec(text)) !== null) add("Percentage", m[0], sentenceContaining(sentences, m[0]));
+  re = /\$\s?\d[\d,]*(?:\.\d+)?(?:\s?(?:million|billion|k|m|bn))?/gi;
+  while ((m = re.exec(text)) !== null) add("Money figure", m[0].trim(), sentenceContaining(sentences, m[0].trim()));
+  re = /\b\d[\d,]*(?:\.\d+)?\s?(?:million|billion|thousand|hours|days|weeks|months|years|people|employees|users|customers|companies|teams)\b/gi;
+  while ((m = re.exec(text)) !== null) add("Number with unit", m[0], sentenceContaining(sentences, m[0]));
+  re = /https?:\/\/[^\s)]+/g;
+  while ((m = re.exec(text)) !== null) add("Link", m[0], m[0]);
+  re = /according to ([A-Z][A-Za-z&'.]+(?: [A-Z][A-Za-z&'.]+){0,3})/g;
+  while ((m = re.exec(text)) !== null) add("Named source", m[1], sentenceContaining(sentences, m[0]));
+  re = /\b([A-Z][A-Za-z&'.]+) (?:report|study|survey|poll|research)\b/g;
+  while ((m = re.exec(text)) !== null) add("Named source", m[1], sentenceContaining(sentences, m[0]));
+  var studyWords = ["study", "report", "survey", "research", "poll", "data shows", "statistics"];
+  for (var i = 0; i < sentences.length; i++) {
+    var low = sentences[i].toLowerCase();
+    for (var j = 0; j < studyWords.length; j++) {
+      if (low.indexOf(studyWords[j]) !== -1) {
+        add("Study or report mention", studyWords[j], sentences[i]);
+        break;
+      }
+    }
+  }
+  return found;
+}
+
+function countEmoji(text) {
+  var m = String(text).match(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}]/gu);
+  return m ? m.length : 0;
+}
+
+function detectSlop(text, sentences) {
+  var low = String(text).toLowerCase();
+  var flags = [];
+  var score = 0;
+  for (var i = 0; i < SLOP_PHRASES.length; i++) {
+    if (low.indexOf(SLOP_PHRASES[i]) !== -1) {
+      flags.push({ kind: "Generic phrase", quote: SLOP_PHRASES[i] });
+      score += 14;
+    }
+  }
+  var emoji = countEmoji(text);
+  if (emoji > 3) {
+    flags.push({ kind: "Emoji load", quote: emoji + " emoji in the post" });
+    score += Math.min(20, (emoji - 3) * 4);
+  }
+  var hashtags = (String(text).match(/#[\p{L}\p{N}_]+/gu) || []).length;
+  if (hashtags > 5) {
+    flags.push({ kind: "Hashtag stuffing", quote: hashtags + " hashtags" });
+    score += Math.min(15, (hashtags - 5) * 3);
+  }
+  var listLines = splitLines(text).filter(function (l) { return /^\d+[.)]\s/.test(l) || /^[-•]\s/.test(l); });
+  if (listLines.length >= 5) {
+    flags.push({ kind: "Listicle padding", quote: listLines.length + " list lines" });
+    score += 10;
+  }
+  var bangs = (String(text).match(/!/g) || []).length;
+  if (bangs > 3) {
+    flags.push({ kind: "Exclamation load", quote: bangs + " exclamation marks" });
+    score += 8;
+  }
+  if (score > 100) score = 100;
+  return { score: score, flags: flags };
+}
+
+function detectBait(text, sentences) {
+  var low = String(text).toLowerCase();
+  var flags = [];
+  var seen = {};
+  function add(kind, quote) {
+    if (seen[quote]) return;
+    seen[quote] = true;
+    flags.push({ kind: kind, quote: quote });
+  }
+  for (var i = 0; i < BAIT_PHRASES.length; i++) {
+    if (low.indexOf(BAIT_PHRASES[i]) !== -1) add("Engagement prompt", BAIT_PHRASES[i]);
+  }
+  for (var j = 0; j < sentences.length; j++) {
+    var s = sentences[j];
+    if (s.indexOf("?") !== -1 && /\byou\b|\byour\b|\bwe\b/i.test(s)) {
+      add("Question to the reader", s);
+    }
+  }
+  return flags;
+}
+
+function verdictFor(slopScore, evidenceCount, baitCount) {
+  if (slopScore >= 55) {
+    return { label: "Skip", cls: "skip", reason: "The slop signals are heavy and the post gives a reply very little solid ground to stand on. Your time is worth more than this one." };
+  }
+  if (evidenceCount >= 1 && slopScore < 40) {
+    return { label: "Reply worth it", cls: "go", reason: "There is a real claim with evidence behind it and the slop level is low, so a specific reply can add something the thread does not already have." };
+  }
+  return { label: "Skim", cls: "skim", reason: "There is a point in here, but the evidence is thin" + (baitCount > 1 ? " and the bait level is high" : "") + ". Reply only if one angle below is genuinely yours." };
+}
+
+function shortTopic(sentence, maxLen) {
+  var s = cleanText(sentence).replace(/^(according to [^,]+,\s*)/i, "");
+  s = s.replace(/[#*_`>]/g, "").replace(/["“”]/g, "");
+  s = s.charAt(0).toLowerCase() + s.slice(1);
+  s = s.replace(/[.!?]+$/, "");
+  if (s.length > (maxLen || 68)) s = s.slice(0, (maxLen || 68)).replace(/\s+\S*$/, "") + "...";
+  return s;
+}
+
+function buildAngles(analysis) {
+  var angles = [];
+  angles.push({
+    title: "Answer the main claim",
+    hook: analysis.claim,
+    why: "The author staked the whole post on this line. A reply that engages it directly reads as a peer, not a passer-by."
+  });
+  var evidenceHook = analysis.evidence.length ? analysis.evidence[0].sentence : (analysis.supporting[0] || analysis.claim);
+  angles.push({
+    title: analysis.evidence.length ? "Build on the evidence" : "Build on the strongest support",
+    hook: evidenceHook,
+    why: analysis.evidence.length
+      ? "This is the one checkable fact in the post. Replies that work with the evidence stand out from the opinion-only comments around them."
+      : "There is no hard evidence in the post, so the strongest supporting line is the safest ground for a reply."
+  });
+  var last = analysis.sentences.length ? analysis.sentences[analysis.sentences.length - 1] : analysis.claim;
+  angles.push({
+    title: "Take up the closing line",
+    hook: last,
+    why: "The closing line is what most readers actually respond to. Meeting it head on keeps your reply specific instead of generic."
+  });
+  return angles;
+}
+
+function generateDrafts(analysis, tone) {
+  var topics = analysis.angles.map(function (a) { return shortTopic(a.hook); });
+  var drafts = [];
+  if (tone === "pushback") {
+    drafts.push("I read " + topics[0] + " a little differently. It holds when the basics are stable, but it starts to break the moment priorities shift every week.");
+    drafts.push("The part I would push on is " + topics[1] + ". In my experience the cause usually sits one layer earlier than the post suggests.");
+    drafts.push("Not sure " + topics[2] + " follows as neatly as it is stated. The outcome depends a lot on the team size and how much slack people actually have.");
+  } else if (tone === "question") {
+    drafts.push("On " + topics[0] + ", what did you see change first, the behaviour or the result? That order usually tells you whether it will stick.");
+    drafts.push("Curious about " + topics[1] + ". Was that true across the whole group, or mainly in one part of it?");
+    drafts.push("For " + topics[2] + ", what would you check in the first two weeks to know it is working? Asking because the early signal is the hard part.");
+  } else {
+    drafts.push("The line about " + topics[0] + " is the one that stays with you. The quiet effect is how much rework disappears once that is actually clear.");
+    drafts.push("That detail on " + topics[1] + " matters more than it looks. Most threads skip the evidence and go straight to opinions, and this one did not.");
+    drafts.push("Yes to " + topics[2] + ". Keeping it that simple is usually the part teams resist, and it is also the part that works.");
+  }
+  return drafts;
+}
+
+function analyzePost(text) {
+  var sentences = splitSentences(text);
+  var claim = pickMainClaim(sentences);
+  var supporting = pickSupporting(sentences, claim);
+  var evidence = detectEvidence(text, sentences);
+  var slop = detectSlop(text, sentences);
+  var bait = detectBait(text, sentences);
+  var verdict = verdictFor(slop.score, evidence.length, bait.length);
+  var base = {
+    sentences: sentences, claim: claim, supporting: supporting,
+    evidence: evidence, slop: slop, bait: bait, verdict: verdict
+  };
+  base.angles = buildAngles(base);
+  base.draftsByTone = {
+    agree: generateDrafts(base, "agree"),
+    pushback: generateDrafts(base, "pushback"),
+    question: generateDrafts(base, "question")
+  };
+  return base;
+}
+
+/* Optional module export for Node tests. Ignored in the browser. */
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    analyzePost: analyzePost, detectEvidence: detectEvidence, detectSlop: detectSlop,
+    detectBait: detectBait, splitSentences: splitSentences, SAMPLE_POST: SAMPLE_POST
+  };
+}
+</script>
+<script>
+"use strict";
+/* UI wiring. Runs only in the browser. */
+(function () {
+  if (typeof document === "undefined") return;
+  var input = document.getElementById("postInput");
+  var current = null;
+  var tone = "agree";
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function counts() {
+    var t = input.value;
+    document.getElementById("charCount").textContent = t.length + " characters";
+    document.getElementById("wordCount").textContent = (t.trim() ? t.trim().split(/\s+/).length : 0) + " words";
+  }
+  input.addEventListener("input", counts);
+
+  function renderDrafts() {
+    if (!current) return;
+    var drafts = current.draftsByTone[tone];
+    var angleTitles = current.angles.map(function (a) { return a.title; });
+    document.getElementById("draftsOut").innerHTML = drafts.map(function (d, i) {
+      return '<div class="draft"><div class="dhead"><span>Angle ' + (i + 1) + ": " + esc(angleTitles[i]) + '</span>' +
+        '<button class="small" data-copy="' + i + '">Copy</button></div><p>' + esc(d) + "</p></div>";
+    }).join("");
+    var btns = document.querySelectorAll("[data-copy]");
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].addEventListener("click", function () {
+        var d = drafts[Number(this.getAttribute("data-copy"))];
+        var self = this;
+        function done() { self.textContent = "Copied"; setTimeout(function () { self.textContent = "Copy"; }, 1400); }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(d).then(done, done);
+        } else { done(); }
+      });
+    }
+  }
+
+  function render() {
+    var text = input.value.trim();
+    if (!text) { alert("Paste a post first, or load the sample post."); return; }
+    current = analyzePost(text);
+    var v = document.getElementById("verdictBox");
+    v.className = "verdict show " + current.verdict.cls;
+    document.getElementById("verdictLabel").textContent = current.verdict.label;
+    document.getElementById("verdictReason").textContent = current.verdict.reason;
+    document.getElementById("emptyState").style.display = "none";
+    document.getElementById("results").style.display = "block";
+    document.getElementById("claimOut").textContent = current.claim || "No clear claim found. The post may be a story or an announcement rather than an argument.";
+    document.getElementById("supportOut").innerHTML = current.supporting.length
+      ? current.supporting.map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("")
+      : "<li>No distinct supporting points found beyond the main claim.</li>";
+    document.getElementById("evidenceOut").innerHTML = current.evidence.length
+      ? current.evidence.map(function (e) {
+          return '<div style="margin-bottom:10px"><span class="flag ok">' + esc(e.type) + ": " + esc(e.match) + "</span><blockquote class=\"hook\">" + esc(e.sentence) + "</blockquote></div>";
+        }).join("")
+      : '<p class="hint">No numbers, sources, links or study mentions found. Treat every claim in this post as opinion until the author backs it up.</p>';
+    document.getElementById("slopScoreLabel").textContent = current.slop.score + " / 100";
+    document.getElementById("slopBar").style.width = current.slop.score + "%";
+    document.getElementById("slopOut").innerHTML = current.slop.flags.length
+      ? current.slop.flags.map(function (f) { return '<span class="flag">' + esc(f.kind) + ": " + esc(f.quote) + "</span>"; }).join("")
+      : '<span class="flag ok">No slop signals found</span>';
+    document.getElementById("baitOut").innerHTML = current.bait.length
+      ? current.bait.map(function (f) { return '<span class="flag bait">' + esc(f.kind) + ": " + esc(f.quote) + "</span>"; }).join("")
+      : '<span class="flag ok">No engagement bait found</span>';
+    document.getElementById("anglesOut").innerHTML = current.angles.map(function (a, i) {
+      return '<div style="margin-bottom:14px"><p style="font-weight:700">' + (i + 1) + ". " + esc(a.title) + "</p>" +
+        '<blockquote class="hook">"' + esc(a.hook) + '"</blockquote><p class="hint">' + esc(a.why) + "</p></div>";
+    }).join("");
+    renderDrafts();
+    v.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  document.getElementById("analyzeBtn").addEventListener("click", render);
+  document.getElementById("sampleBtn").addEventListener("click", function () {
+    input.value = SAMPLE_POST; counts(); render();
+  });
+  document.getElementById("clearBtn").addEventListener("click", function () {
+    input.value = ""; counts(); current = null;
+    document.getElementById("verdictBox").className = "verdict";
+    document.getElementById("results").style.display = "none";
+    document.getElementById("emptyState").style.display = "block";
+    var g = document.getElementById("geminiOut"); g.style.display = "none"; g.textContent = "";
+  });
+  var seg = document.getElementById("toneSeg");
+  seg.addEventListener("click", function (e) {
+    if (e.target.tagName !== "BUTTON") return;
+    var btns = seg.querySelectorAll("button");
+    for (var i = 0; i < btns.length; i++) btns[i].classList.remove("active");
+    e.target.classList.add("active");
+    tone = e.target.getAttribute("data-tone");
+    renderDrafts();
+  });
+
+  /* Optional BYOK Gemini enhancement.
+     The key is read from local storage, kept on this machine,
+     and sent only to Google's API endpoint below. */
+  var keyInput = document.getElementById("geminiKey");
+  try {
+    var saved = window.localStorage.getItem("lpe_gemini_key");
+    if (saved) keyInput.value = saved;
+  } catch (err) { /* local storage unavailable, key field still works for this session */ }
+  keyInput.addEventListener("change", function () {
+    try { window.localStorage.setItem("lpe_gemini_key", keyInput.value.trim()); } catch (err) {}
+  });
+  document.getElementById("forgetKeyBtn").addEventListener("click", function () {
+    keyInput.value = "";
+    try { window.localStorage.removeItem("lpe_gemini_key"); } catch (err) {}
+  });
+  document.getElementById("geminiBtn").addEventListener("click", function () {
+    var out = document.getElementById("geminiOut");
+    var key = keyInput.value.trim();
+    var text = input.value.trim();
+    out.style.display = "block";
+    if (!key) { out.textContent = "Add your own Gemini key first. The local analysis above already works fully without one."; return; }
+    if (!text) { out.textContent = "Paste a post first."; return; }
+    if (!current) render();
+    out.textContent = "Asking Gemini for a deeper read...";
+    var prompt = "You are explaining a LinkedIn post to a busy professional. Be plain and specific, no hype.\n\nPOST:\n" + text +
+      "\n\nLOCAL ANALYSIS (argument, evidence, slop score):\n" + JSON.stringify({
+        claim: current.claim, supporting: current.supporting,
+        evidence: current.evidence, slopScore: current.slop.score,
+        slopFlags: current.slop.flags, bait: current.bait
+      }) +
+      "\n\nGive: 1) what the author really wants the reader to believe, 2) the strongest and weakest parts of the argument, 3) what is missing, 4) one reply angle that would genuinely add to the thread.";
+    fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-goog-api-key": key },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    }).then(function (r) {
+      if (!r.ok) throw new Error("Gemini returned HTTP " + r.status);
+      return r.json();
+    }).then(function (data) {
+      var parts = (((data.candidates || [])[0] || {}).content || {}).parts || [];
+      var txt = parts.map(function (p) { return p.text || ""; }).join("");
+      out.textContent = txt || "Gemini returned an empty response. The local analysis above still stands.";
+    }).catch(function (e) {
+      out.textContent = "Gemini call failed: " + e.message + ". Check the key and your connection. The local analysis above still stands.";
+    });
+  });
+
+  counts();
+})();
+</script>
+</body>
+</html>

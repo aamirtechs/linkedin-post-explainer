@@ -1,0 +1,22 @@
+# OS and editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+.idea/
+.vscode/
+
+# Local notes and scratch
+notes/
+scratch/
+*.local.*
+
+# Node, only used for local syntax and engine tests
+node_modules/
+
+# Never commit an API key file
+*api-key*
+*apikey*
+.env
+.env.*
